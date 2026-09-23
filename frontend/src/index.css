@@ -1,0 +1,351 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   DESIGN TOKENS - "Nocturne" (dark, default) + "Daylight" (light) themes
+   The ink / fog scales are RGB triplets consumed by tailwind.config.js with
+   <alpha-value>, so flipping [data-theme] on <html> re-skins every existing
+   Tailwind class (bg-ink-900, text-fog-100 ...) at once.
+   ========================================================================== */
+:root {
+  /* Native widgets follow the theme. JS flips [data-theme] on <html>. */
+  color-scheme: dark;
+
+  /* ---- semantic surfaces (dark = default "Nocturne" theme) ---------------- */
+  --surface-page: #0a0a0a;
+  --surface-raised: rgba(10, 10, 10, 0.8);
+  --surface-card: #141414;
+  --surface-input: rgba(10, 10, 10, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-input: rgba(255, 255, 255, 0.1);
+  --text-strong: #f6f8ff;
+  --text-body: #e6eaf9;
+  --text-muted: #98a2c0;
+  --text-faint: #7a85a6;
+  --text-on-brand: #ffffff;
+  --ghost-hover-bg: rgba(255, 255, 255, 0.05);
+  --scrim-strong: rgba(5, 5, 5, 0.92);
+
+  /* ink = surfaces, fog = text (RGB triplets, see tailwind.config.js) */
+  --rgb-ink-950: 10 10 10;
+  --rgb-ink-900: 10 10 10;
+  --rgb-ink-800: 20 20 20;
+  --rgb-ink-700: 28 28 28;
+  --rgb-ink-600: 42 42 42;
+  --rgb-ink-500: 58 58 58;
+  --rgb-fog-50: 246 248 255;
+  --rgb-fog-100: 230 234 249;
+  --rgb-fog-300: 185 193 220;
+  --rgb-fog-400: 152 162 192;
+  --rgb-fog-500: 122 133 166;
+  --rgb-fog-600: 92 102 132;
+
+  --palette-ink-950: #0a0a0a;
+  --palette-ink-900: #0a0a0a;
+  --palette-ink-800: #141414;
+  --palette-ink-700: #1c1c1c;
+  --palette-ink-600: #2a2a2a;
+  --palette-ink-500: #3a3a3a;
+  --palette-brand-500: #7c5cff;
+  --palette-brand-600: #6540e8;
+  --palette-accent-500: #ffa91d;
+  --palette-coral-500: #ff4d7d;
+  --palette-mint-500: #16c79a;
+  --palette-sky-500: #22a9f0;
+  --palette-fog-50: #f6f8ff;
+  --palette-fog-400: #98a2c0;
+  --shell-max-width: 1280px;
+}
+
+/* ---- LIGHT THEME ("Daylight") ---------------------------------------------
+   Bright surfaces, dark text. ink flips to light greys, fog flips to dark
+   navy text; brand/accent/coral/mint/sky stay vivid on both themes. */
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* semantic surfaces (light equivalents) */
+  --surface-card: #ffffff;
+  --surface-input: #ffffff;
+  --border-subtle: rgba(24, 32, 68, 0.08);
+  --border-input: rgba(24, 32, 68, 0.16);
+  --ghost-hover-bg: rgba(124, 92, 255, 0.08);
+  --scrim-strong: rgba(244, 246, 252, 0.94);
+
+  --rgb-ink-950: 244 246 252;
+  --rgb-ink-900: 255 255 255;
+  --rgb-ink-800: 238 241 250;
+  --rgb-ink-700: 227 232 245;
+  --rgb-ink-600: 212 219 238;
+  --rgb-ink-500: 194 203 230;
+  --rgb-fog-50: 19 26 51;
+  --rgb-fog-100: 42 51 84;
+  --rgb-fog-300: 74 83 120;
+  --rgb-fog-400: 90 99 134;
+  --rgb-fog-500: 109 118 153;
+  --rgb-fog-600: 138 146 176;
+
+  --palette-ink-950: #f4f6fc;
+  --palette-ink-900: #ffffff;
+  --palette-ink-800: #eef1fa;
+  --palette-ink-700: #e3e8f5;
+  --palette-ink-600: #d4dbee;
+  --palette-ink-500: #c2cbe6;
+  --palette-fog-50: #131a33;
+  --palette-fog-400: #5a6386;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-ink-950 text-fog-100 font-sans antialiased;
+    background-image:
+      radial-gradient(1100px 520px at 12% -12%, rgba(124, 92, 255, 0.16), transparent 60%),
+      radial-gradient(900px 480px at 92% 4%, rgba(34, 169, 240, 0.10), transparent 62%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  /* Softer ambient glow on the light theme so tints stay subtle. */
+  [data-theme='light'] body {
+    background-image:
+      radial-gradient(1100px 520px at 12% -12%, rgba(124, 92, 255, 0.10), transparent 60%),
+      radial-gradient(900px 480px at 92% 4%, rgba(34, 169, 240, 0.07), transparent 62%);
+  }
+
+  ::selection {
+    @apply bg-brand-500/40 text-fog-50;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-ink-950;
+  }
+
+  /* Firefox / WebKit scrollbars tuned to the palette */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--palette-ink-600, #2a2a2a) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-ink-600;
+  }
+
+  /* WebKit paints a light autofill background over dark fields unless overridden. */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-text-fill-color: var(--palette-fog-50, #f6f8ff);
+    caret-color: var(--palette-fog-50, #f6f8ff);
+    box-shadow: 0 0 0 1000px var(--palette-ink-800, #141414) inset;
+    transition: background-color 9999s ease-out 0s;
+  }
+
+  /* Respect users who ask for less motion (smooth scroll, shimmer, entrances). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* --- layout helpers ---------------------------------------------------- */
+  .shell {
+    @apply mx-auto w-full max-w-[var(--shell-max-width)] px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-8 sm:py-10 lg:py-12;
+  }
+
+  /* --- surfaces (React Native "card" feel) ------------------------------- */
+  /* Theme-aware tokens keep cards readable in dark AND light mode. */
+  .card {
+    @apply rounded-3xl border shadow-card backdrop-blur;
+    border-color: var(--border-subtle);
+    background-color: var(--surface-card);
+  }
+
+  .card-hover {
+    @apply transition duration-300 hover:-translate-y-1 hover:border-brand-500/40 hover:shadow-glow;
+  }
+
+  .empty-state {
+    @apply card flex flex-col items-center justify-center gap-2 px-6 py-14 text-center;
+  }
+
+  /* --- buttons ----------------------------------------------------------- */
+  .btn {
+    @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 rounded-2xl px-4 py-2.5
+      text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-gradient text-white shadow-glow hover:brightness-110 active:scale-[0.98];
+  }
+
+  .btn-accent {
+    @apply btn bg-accent-gradient text-ink-950 hover:brightness-105 active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply btn text-fog-100 transition;
+    border: 1px solid var(--border-input);
+    background-color: var(--ghost-hover-bg);
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(155, 135, 255, 0.5);
+    background-color: var(--ghost-hover-bg);
+  }
+
+  .btn-danger {
+    @apply btn border border-coral-500/40 bg-coral-500/15 text-coral-400 hover:bg-coral-500/25;
+  }
+
+  .btn-sm {
+    @apply min-h-[38px] rounded-xl px-3 py-1.5 text-xs;
+  }
+
+  .icon-btn {
+    @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-fog-100 transition;
+    border: 1px solid var(--border-input);
+    background-color: var(--ghost-hover-bg);
+  }
+
+  .icon-btn:hover {
+    border-color: rgba(155, 135, 255, 0.5);
+  }
+
+  /* --- form controls ----------------------------------------------------- */
+  .field {
+    @apply w-full min-h-[44px] rounded-2xl border px-3.5 py-2.5 text-sm focus:border-brand-400/60;
+    border-color: var(--border-input);
+    background-color: var(--surface-input);
+    color: var(--text-strong);
+  }
+
+  .field::placeholder {
+    color: var(--text-faint);
+  }
+
+  /* Markup strips the native select arrow (`field appearance-none`) - draw our own. */
+  select.field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2398A2C0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+    padding-right: 2.75rem;
+  }
+
+  select.field:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239B87FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 18 6-6 6 6'/%3E%3C/svg%3E");
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-fog-400;
+  }
+
+  .field-hint {
+    @apply mt-1 text-[11px] text-fog-500;
+  }
+
+  /* --- chips & badges --------------------------------------------------- */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+    border: 1px solid var(--border-input);
+    background-color: var(--ghost-hover-bg);
+    color: var(--text-muted);
+  }
+
+  .chip-active {
+    @apply border-brand-400/60 bg-brand-500/20 text-fog-50;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide;
+  }
+
+  .badge-trending {
+    @apply badge bg-coral-gradient text-white;
+  }
+
+  .badge-new {
+    @apply badge bg-sky-500/20 text-sky-400 ring-1 ring-sky-500/40;
+  }
+
+  .badge-upcoming {
+    @apply badge bg-accent-500/20 text-accent-400 ring-1 ring-accent-500/40;
+  }
+
+  .badge-rating {
+    @apply badge bg-ink-950/80 text-accent-400 backdrop-blur;
+  }
+
+  /* --- horizontal rails (RN ScrollView-like) ----------------------------- */
+  .rail {
+    @apply flex gap-4 overflow-x-auto pb-3 pt-1;
+    scroll-snap-type: x proximity;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail-item {
+    scroll-snap-align: start;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* --- misc ------------------------------------------------------------- */
+  .divider {
+    @apply h-px w-full;
+    background-color: var(--border-subtle);
+  }
+
+  .skeleton {
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.04) 100%);
+    background-size: 500px 100%;
+    @apply animate-shimmer rounded-2xl;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-300 via-brand-400 to-sky-400 bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .pb-tabbar {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
