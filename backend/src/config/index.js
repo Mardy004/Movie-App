@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -25,15 +26,30 @@ const num = (value, fallback) => {
 const list = (value, fallback) =>
   (value ? String(value).split(',') : fallback).map((entry) => entry.trim()).filter(Boolean);
 
+/**
+ * Where the JSON database lives. DB_FILE overrides it (used by the tests; relative
+ * paths resolve against the backend root). On serverless hosts (VERCEL=1) the
+ * bundled backend/data directory is not deployed and the function filesystem is
+ * read-only apart from /tmp, so default to - and resolve relative overrides
+ * against - the writable tmp directory.
+ */
+export function resolveStoreFile(env = process.env) {
+  if (env.DB_FILE) {
+    const base = env.VERCEL && !path.isAbsolute(env.DB_FILE) ? os.tmpdir() : ROOT_DIR;
+    return path.resolve(base, env.DB_FILE);
+  }
+  return env.VERCEL
+    ? path.join(os.tmpdir(), 'movieshow-db.json')
+    : path.join(ROOT_DIR, 'data', 'db.json');
+}
+
 export const config = {
   env: process.env.NODE_ENV || 'development',
   port: num(process.env.PORT, 4000),
   corsOrigins: list(process.env.CORS_ORIGIN, ['*']),
 
-  /** Where the JSON database lives. Override with DB_FILE (used by the tests). */
-  storeFile: process.env.DB_FILE
-    ? path.resolve(ROOT_DIR, process.env.DB_FILE)
-    : path.join(ROOT_DIR, 'data', 'db.json'),
+  /** Where the JSON database lives - see resolveStoreFile() above. */
+  storeFile: resolveStoreFile(),
   seedFile: null, // demo catalogue lives in src/data/seedMovies.js
 
   admin: {

@@ -124,38 +124,7 @@ export default function Footer() {
             )}
           </div>
 
-          <div className="lg:col-span-3">
-            <ColumnTitle>Catalogue &amp; admin</ColumnTitle>
-            <ul className="space-y-2">
-              <li>
-                <FooterLink to="/admin/login">
-                  <span className="inline-flex items-center gap-2">
-                    <ShieldIcon className="h-4 w-4" />
-                    Admin sign in
-                  </span>
-                </FooterLink>
-              </li>
-              <li>
-                <FooterLink to="/admin">Admin dashboard</FooterLink>
-              </li>
-              <li>
-                <FooterLink to={`${API_BASE}/api/health`} external>
-                  API health check
-                </FooterLink>
-              </li>
-              <li>
-                <ProviderHint provider={provider} />
-              </li>
-            </ul>
-            <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3">
-              <p className="flex items-center gap-2 text-xs font-semibold text-fog-200">
-                <MailIcon className="h-4 w-4 text-brand-300" />
-                Want a curated list?
-              </p>
-              <p className="mt-1 text-xs text-fog-500">
-                The newsletter block is part of the demo - wire it to your own provider when you go live.
-              </p>
-            </div>
+          {/*  */}
           </div>
         </div>
 
@@ -187,7 +156,6 @@ export default function Footer() {
         </div>
 
         {/* FOOTER-HELPERS */}
-      </div>
     </footer>
   );
 }
